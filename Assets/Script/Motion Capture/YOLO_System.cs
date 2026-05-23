@@ -60,8 +60,8 @@ public class YOLODatas : MonoBehaviour
                     string input = Encoding.UTF8.GetString(data);
                     string wrappedJson = "{\"people\":" + input + "}";
 
-                    json.input = wrappedJson;
-                    json.saveJsonToFile(Application.dataPath + "/data.json");
+                    // json.input = wrappedJson;
+                    // json.saveJsonToFile(Application.dataPath + "/data.json");
 
                     try
                     {
@@ -87,49 +87,49 @@ public class YOLODatas : MonoBehaviour
             }
         }
     }
-    IEnumerator WriteData()
-    {
-        while (true)
-        {
-            try
-            {
-                string log = "";
-                lock (this)
-                {
-                    pointState = gameSystem.pointState;
-                    if (tracked.people == null) continue;
-                    for (int i = 0; i < tracked.people.Length; i++)
-                    {
-                        log += $"player_id:{tracked.people[i].person_id}, ";
+    // IEnumerator WriteData()
+    // {
+    //     while (true)
+    //     {
+    //         try
+    //         {
+    //             string log = "";
+    //             lock (this)
+    //             {
+    //                 pointState = gameSystem.pointState;
+    //                 if (tracked.people == null) continue;
+    //                 for (int i = 0; i < tracked.people.Length; i++)
+    //                 {
+    //                     log += $"player_id:{tracked.people[i].person_id}, ";
 
-                        for (int j = 0; j < points[i].Count; j++)
-                        {
-                            Vector2 point = points[i][j];
-                            try
-                            {
-                                log += $"point_id:{j}(position:[{point.x}, {point.y}], be_seleted:[{pointState[i][j]}]), ";
-                            }
-                            catch(Exception e)
-                            {
-                                Debug.Log(e);
-                            }
-                        }
-                        log += "\n";
-                    }
-                    // jsonDatas.jsonString = log;
-                    string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                    string filePath = Path.Combine(desktopPath, "LandmarkPoints_Export.json");
-                    File.WriteAllText(filePath, log);
-                }
-            }
-            catch(IOException e) 
-            {
-                Debug.LogError("Save failed" + e.Message);
-            }
-            // AssetDatabase.ImportAsset("Assets/landmarkpoints.json");
-            yield return null;
-        }
-    }
+    //                     for (int j = 0; j < points[i].Count; j++)
+    //                     {
+    //                         Vector2 point = points[i][j];
+    //                         try
+    //                         {
+    //                             log += $"point_id:{j}(position:[{point.x}, {point.y}], be_seleted:[{pointState[i][j]}]), ";
+    //                         }
+    //                         catch(Exception e)
+    //                         {
+    //                             Debug.Log(e);
+    //                         }
+    //                     }
+    //                     log += "\n";
+    //                 }
+    //                 // jsonDatas.jsonString = log;
+    //                 // string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    //                 // string filePath = Path.Combine(desktopPath, "LandmarkPoints_Export.json");
+    //                 // File.WriteAllText(filePath, log);
+    //             }
+    //         }
+    //         catch(IOException e) 
+    //         {
+    //             Debug.LogError("Save failed" + e.Message);
+    //         }
+    //         // AssetDatabase.ImportAsset("Assets/landmarkpoints.json");
+    //         yield return null;
+    //     }
+    // }
     [Serializable] public class DatasToJson
     {
         public string input;        
@@ -184,7 +184,7 @@ public class YOLODatas : MonoBehaviour
             thread = new Thread(new ThreadStart(reciveDatas));
             thread.IsBackground = true;
             thread.Start();
-            StartCoroutine(WriteData());
+            // StartCoroutine(WriteData());
         }
     }
 }
