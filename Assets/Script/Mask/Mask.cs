@@ -9,13 +9,12 @@ public class Mask : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private List<RawImage>[] stickers = new List<RawImage>[4];
     private GameSystem gameSystem;
-    private Texture2D texture;
+    [SerializeField] private Texture2D texture;
     private List<bool>[] pasteState = new List<bool>[4];
     public Transform[] uiParents;
     void Start()
     {
         gameSystem = GameObject.FindFirstObjectByType<GameSystem>();
-        texture = Resources.Load<Texture2D>("Texture/flower");
     }
 
     // Update is called once per frame
@@ -70,7 +69,6 @@ public class Mask : MonoBehaviour
         for(int i = 0; i < stickers.Length; i++)
         {
             stickers[i] = new List<RawImage>();
-            List<bool> ps = gameSystem.pointState[i];
             for(int j = 0; j < gameSystem.pointState[i].Count; j++)
             {
                 stickers[i].Add(null);

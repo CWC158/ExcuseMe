@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using Mono.Cecil.Cil;
 using System.Drawing;
-using System.Threading.Tasks;
 
 public class YOLODatas : MonoBehaviour
 {
@@ -61,14 +60,12 @@ public class YOLODatas : MonoBehaviour
                     string input = Encoding.UTF8.GetString(data);
                     string wrappedJson = "{\"people\":" + input + "}";
 
-                    // json.input = wrappedJson;
-                    // json.saveJsonToFile(Application.dataPath + "/data.json");
+                    json.input = wrappedJson;
+                    json.saveJsonToFile(Application.dataPath + "/data.json");
 
                     try
                     {
                         tracked = JsonUtility.FromJson<Tracked>(wrappedJson);
-
-                        // Debug.Log("Number of tracked people: " + allTracked.trackedPeople.Length);
 
                         for (int i = 0; i < tracked.people.Length; i++)
                         {
@@ -80,7 +77,6 @@ public class YOLODatas : MonoBehaviour
                                 Vector2 point = new Vector2(person.keypoints[j].position[0], person.keypoints[j].position[1]);
                                 points[i].Add(point);
                             }
-                            // points[i] = pre;
                         }
                     }
                     catch (Exception e) 
@@ -181,16 +177,14 @@ public class YOLODatas : MonoBehaviour
             udpClient.Close();
         }
     }
-    public Task StartLoad()
+    public void StartLoad()
     {
         if(thread == null)
         {
             thread = new Thread(new ThreadStart(reciveDatas));
             thread.IsBackground = true;
             thread.Start();
-            // Start the coroutine normally; do not await a Coroutine.
             StartCoroutine(WriteData());
         }
-        return Task.CompletedTask;
     }
 }

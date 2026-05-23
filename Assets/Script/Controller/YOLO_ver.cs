@@ -69,6 +69,8 @@ public class GameSystem : MonoBehaviour
         {
             Directory.CreateDirectory(folder);
         }
+        
+         _tracked.StartLoad();
     }
     void Update()
     {
@@ -202,9 +204,7 @@ public class GameSystem : MonoBehaviour
     {
         Vector3[] corners = new Vector3[4];
         _selectionbox[gamepadIndex].GetComponent<RectTransform>().GetWorldCorners(corners);
-        // corners[0] = 左下, corners[1] = 左上, corners[2] = 右上, corners[3] = 右下
 
-        // 如果有 Canvas，用 Canvas 的相機或螢幕大小來抓標準邊界
         float screenWidth = Screen.width;
         float screenHeight = Screen.height;
         for (int n = 0; n < _tracked.tracked.people.Length; n++)
@@ -221,7 +221,7 @@ public class GameSystem : MonoBehaviour
                 float yRange = Math.Abs(corners[1].y - corners[0].y);
 
                 Vector2 selectionCenter = _selectionbox[gamepadIndex].anchoredPosition;
-                if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(1080f - position.y - selectionCenter.y) <= yRange / 2f)
+                if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(position.y - selectionCenter.y) <= yRange / 2f)
                 {
                     pointState[index][m] = true;
                     Debug.Log(pointState[index][m]);
@@ -280,18 +280,13 @@ public class GameSystem : MonoBehaviour
             if(_tracked.tracked.people == null) continue;
             for(int j = 0; j < _tracked.tracked.people.Length; j++)
             {
-                if(_tracked.tracked.people[j].person_id == _players[i].playerId)
-                {
-                    Debug.Log(_tracked.tracked.people[j].person_id);
-                    Debug.Log(_players[i].playerId);
-                    _players[i].points = points[j];
-                }
+                int index = Array.IndexOf(_playerId, _tracked.tracked.people[j].person_id);
+                _players[index].points = points[j];
             }
         }
     }
     private void ReloadPlayerData()
     {
-        _tracked.StartLoad();
         gamePads = Gamepad.all.ToArray();
         Debug.Log("Gamepad.all.Count: " + Gamepad.all.Count);
         Debug.Log(gamePads.Length);
@@ -330,7 +325,7 @@ public class GameSystem : MonoBehaviour
         {
             pointState[i] = new List<bool>();
             Debug.Log(pointState[i]);
-            for(int j = 0; j < points[i].Count; j++)// the landmarks upload too late, so have to set the array length in 33 
+            for(int j = 0; j < 17; j++)// the landmarks upload too late, so have to set the array length in 33 
             {
                 pointState[i].Add(false);
             }
