@@ -11,7 +11,7 @@ public class Mask : MonoBehaviour
     private GameManager gameManager;
     [SerializeField] private Texture2D texture;
     private List<bool>[] pasteState;
-    public Transform[] uiParents;
+    public Transform[] UIParents;
     void Start()
     {
         gameManager = GameObject.FindFirstObjectByType<GameManager>();
@@ -26,7 +26,7 @@ public class Mask : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(e);
+            Debug.LogWarning("Not Yet Setup...");
         }
     }
     void PasteStickers()
@@ -40,7 +40,7 @@ public class Mask : MonoBehaviour
                     if(gameManager.pointState[i][j] == true && pasteState[i][j] == false)
                     {
                         GameObject instance = new GameObject("Sticker");
-                        instance.transform.SetParent(uiParents[i] != null ? uiParents[i] : transform, false);
+                        instance.transform.SetParent(UIParents[i] != null ? UIParents[i] : transform, false);
                         RawImage img = instance.AddComponent<RawImage>();
                         img.texture = texture;
                         img.rectTransform.sizeDelta = new Vector2(200f, 200f);
@@ -62,9 +62,9 @@ public class Mask : MonoBehaviour
     {
         pasteState = new List<bool>[gameManager._players.Length];
         stickers = new List<RawImage>[gameManager._players.Length];
-        for(int k = 0; k < uiParents.Length; k++)
+        for(int k = 0; k < UIParents.Length; k++)
         {
-            foreach(Transform child in uiParents[k] != null ? uiParents[k] : transform)
+            foreach(Transform child in UIParents[k] != null ? UIParents[k] : transform)
             {
                 Destroy(child.gameObject);
             }

@@ -13,41 +13,39 @@ using UnityEditor;
 public class GameManager : MonoBehaviour
 {
     public PlayerData[] _players;
-    private int[] _playerId;
+    public int[] _playerId;
     private int[] _padId;
     //---------------------------------------------------------
-    private YOLODatas _tracked;
-    private Thread thread;
+    public YOLODatas _tracked;
     public List<bool>[] pointState;
     //---------------------------------------------------------
     private Mask mask;
     //---------------------------------------------------------
     public bool[] _ready;
-    public float time;
-    [SerializeField] private float interval;
-    private float captureTime;
     [SerializeField]private string folder;
     public static event Action _start;
     public static event Action _stop;
     private bool gameRunning;
     //---------------------------------------------------------
     private string record;
-    private int num;
-    private Coroutine coroutine;
+    private int phase;
     //---------------------------------------------------------
     private Controller controller;
-    private RawImage[] pictures;
+    [SerializeField] private RawImage[] pictures;
+    private UITrigger uiTrigger;
+    public bool isSetup = false;
     //private DatasToJson json = new DatasToJson();
     void Awake()
     {
         _tracked = FindFirstObjectByType<YOLODatas>();
         mask = FindFirstObjectByType<Mask>();
         controller = FindFirstObjectByType<Controller>();
+        uiTrigger = FindFirstObjectByType<UITrigger>();
     }
     void Start()
     {
-        _start += GameStart;
-        _stop += GameStop;
+        _start += () =>GameStart(out gameRunning);
+        _stop += () =>GameStop(out gameRunning);
 
         folder = "Assets/Screenshots";
 
@@ -63,9 +61,10 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ReloadPlayerData();
+            GameReload(out isSetup, out gameRunning);
+            PlayerHidden();
         }
-        if(!gameRunning)
+        if(!gameRunning && uiTrigger.triggerNum == 1)
         {
             try
             {
@@ -74,62 +73,6 @@ public class GameManager : MonoBehaviour
             catch(Exception e)
             {
                 Debug.Log(e);
-            }
-        }
-    }
-    // Define a Player class to store player information such as player ID, gamepad ID, and cursor reference
-    public class PlayerData
-    {
-        public int playerId;
-        public int padId;
-        public GameObject cursor;
-        public GameObject selectionBox;
-        public bool isSelected;
-        public List<Vector2> points;
-        public List<bool> pointState;
-        public PlayerData(int playerId = 0, int padId = 0, GameObject cursor = null, GameObject selectionBox = null, bool isSelecting = false, List<Vector2> points = null, List<bool> pointState = null)
-        {
-            this.playerId = playerId;
-            this.padId = padId;
-            this.cursor = cursor;
-            this.selectionBox = selectionBox;
-            this.isSelected = isSelecting;
-            this.points = points ?? new List<Vector2>();
-            this.pointState = pointState ?? new List<bool>();
-        }
-    }
-    void Ready()
-    {
-        if(_ready.All(x => x == true))
-        {
-            Debug.Log("All Players are Ready. Starting the Game...");
-            _start?.Invoke();
-        }
-    }
-    // Check if the landmark points of other players are within the selection area of the current player and update the landmarkSelected list accordingly
-    public void CalculatePointState(int gamepadIndex)
-    {
-        Vector3[] corners = new Vector3[4];
-        _players[gamepadIndex].selectionBox.GetComponent<RectTransform>().GetWorldCorners(corners);
-
-        for (int n = 0; n < _tracked.tracked.people.Length; n++)
-        {
-            int index = Array.IndexOf(_playerId, _tracked.tracked.people[n].person_id);
-            if (index == -1) continue;
-
-            // if (index == gamepadIndex) continue;
-            for(int m = 0; m < _players[index].pointState.Count; m++)
-            {
-                Vector2 position = _players[index].points[m];
-
-                float xRange = Math.Abs(corners[2].x - corners[1].x);
-                float yRange = Math.Abs(corners[1].y - corners[0].y);
-                Vector2 selectionCenter = _players[gamepadIndex].selectionBox.GetComponent<RectTransform>().anchoredPosition;
-
-                if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(position.y - selectionCenter.y) <= yRange / 2f)
-                {
-                    _players[index].pointState[m] = true;
-                }
             }
         }
     }
@@ -154,24 +97,15 @@ public class GameManager : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.Log("Waiting for Data...");
+                Debug.LogWarning("Waiting for Tracked Data...：" + e);
             }
             yield return null;
         }
     }
-    public void ReloadPlayerData()
+    private void GameReload(out bool isSetup, out bool gameRunning)
     {   
-        if(coroutine != null)
-        {
-            StopCoroutine(coroutine);
-        }
-
         controller.Reload();
-
-        time = 0f;
-        captureTime = interval;
-        num = 1;
-        gameRunning = false;
+        controller.enabled = true;
         
         _playerId = new int[controller.gamePads.Length];
         _players = new PlayerData[controller.gamePads.Length];
@@ -188,7 +122,7 @@ public class GameManager : MonoBehaviour
             catch(Exception e)
             {
                 _playerId[i] = -1;
-                Debug.Log($"Player {i} not found");
+                Debug.LogWarning($"Player {i} not found ：" + e);
             }
         }
 
@@ -207,7 +141,7 @@ public class GameManager : MonoBehaviour
         }
         for (int i = 0; i < _players.Length; i++)
         {
-              _players[i] = new PlayerData(_playerId[i], _padId[i], controller._cursors[i], controller._selectionbox[i], controller._state[i], _tracked.points[i], pointState[i]);
+            _players[i] = new PlayerData(_playerId[i], _padId[i], controller._cursors[i], controller._selectionbox[i], controller._state[i], _tracked.points[i], pointState[i]);
         }
 
         for (int i = 0; i < _ready.Length; i++)
@@ -216,12 +150,16 @@ public class GameManager : MonoBehaviour
         }
 
         mask.Reload();
+        uiTrigger.triggerNum = 0;
+        uiTrigger.director.time = 0f;
+        isSetup = true;
+        gameRunning = false;
     }
-    public void GameStart()
+    private void GameStart(out bool gameRunning)
     {
         for(int i = 0; i < pointState.Length; i++)
         {
-            pointState[i] = new List<bool>();
+            pointState[i].Clear();
             for(int j = 0; j < _tracked.points[i].Count; j++)
             {
                 pointState[i].Add(false);
@@ -230,38 +168,22 @@ public class GameManager : MonoBehaviour
         }
 
         mask.Reload();
+        PlayerHidden();
+        uiTrigger.triggerNum = 2;
 
-        if(coroutine != null)
-        {
-            StopCoroutine(coroutine);
-        }
         record = DateTime.Now.ToString("MMdd_HHmmss");
-        coroutine = StartCoroutine(ScreenShots());
+        StartCoroutine(Timeline());
 
         gameRunning = true;
     }
-    IEnumerator ScreenShots()
+    private void GameStop(out bool gameRunning)
     {
-        while(num < 4)
+        for(int i = 0; i < _ready.Length; i++)
         {
-            time += Time.deltaTime;
-            if(time >= captureTime)
-            {
-                num += 1;
-                string file = folder + "/" + record + $"__{num}" + ".png";
-                ScreenCapture.CaptureScreenshot(file);
-
-                captureTime += interval;
-            }
-            yield return null;
+            _ready[i] = false;
         }
-        _stop?.Invoke();
-    }
-    void GameStop()
-    {
         gameRunning = false;
-        StopCoroutine(coroutine);
-        StopCoroutine(controller.coroutine);
+        controller.enabled = false;
 
          for(int i = 0; i < pictures.Length; i++)
         {
@@ -272,9 +194,126 @@ public class GameManager : MonoBehaviour
             loadedTexture.LoadImage(pic);
             pictures[i].texture = loadedTexture;
         }
-
+        uiTrigger.triggerNum = 3;
         #if UNITY_EDITOR
         AssetDatabase.Refresh();
         #endif
+    }
+    private void Ready()
+    {
+        if(_ready.All(x => x == true))
+        {
+            Debug.Log("All Players are Ready. Starting the Game...");
+            _start?.Invoke();
+        }
+    }
+    IEnumerator Timeline()
+    {
+        string file = ""; 
+        phase = 0;
+
+        while(true)
+        {
+            switch (phase)
+            {
+                case 0:
+                    if (uiTrigger.director.time >= 6f)
+                    {
+                        Debug.Log("Take Screenshot 1");
+                        file = $"{folder}/{record}__0.png";
+                        ScreenCapture.CaptureScreenshot(file);
+                        phase = 1;
+                    }
+                    break;
+
+                case 1:
+                    if (uiTrigger.director.time >= 17f)
+                    {
+                        Debug.Log("Start!!!");
+                        PlayerShow();
+                        phase = 2;
+                    }
+                    break;
+
+                case 2:
+                    if (uiTrigger.director.time >= 28.25f)
+                    {
+                        Debug.Log("Take Screenshot 2");
+                        file = $"{folder}/{record}__1.png";
+                        ScreenCapture.CaptureScreenshot(file);
+                        phase = 3;
+                    }
+                    break;
+
+                case 3:
+                    if (uiTrigger.director.time >= 38.5f)
+                    {
+                        Debug.Log("Take Screenshot 3");
+                        file = $"{folder}/{record}__2.png";
+                        ScreenCapture.CaptureScreenshot(file);
+                        phase = 4;
+                    }
+                    break;
+
+                case 4:
+                    if (uiTrigger.director.time >= uiTrigger.director.duration)
+                    {
+                        Debug.Log("Take Screenshot 4");
+                        file = $"{folder}/{record}__3.png";
+                        ScreenCapture.CaptureScreenshot(file);
+                        phase = 5;
+                        yield return null;
+
+                        Debug.Log("Game Stop by Timeline");
+                        _stop?.Invoke();
+                        yield break;
+                    }
+                    break;
+            }
+            yield return new WaitForSeconds(0.05f); 
+        }
+    }
+    public void PlayerHidden()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            controller._cursors[i].SetActive(false);
+            controller._cursors[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(960, 540);
+            
+            controller._selectionbox[i].SetActive(false);
+            controller._selectionbox[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(960, 540);
+            controller._selectionbox[i].GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+        }
+        controller.enabled = false;
+    }
+    public void PlayerShow()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            controller._cursors[i].SetActive(true);
+            
+            controller._selectionbox[i].SetActive(true);
+        }
+        controller.enabled = true;
+    }
+    public class PlayerData
+    {
+        public int playerId;
+        public int padId;
+        public GameObject cursor;
+        public GameObject selectionBox;
+        public bool isSelected;
+        public List<Vector2> points;
+        public List<bool> pointState;
+        public PlayerData(int playerId = 0, int padId = 0, GameObject cursor = null, GameObject selectionBox = null, bool isSelecting = false, List<Vector2> points = null, List<bool> pointState = null)
+        {
+            this.playerId = playerId;
+            this.padId = padId;
+            this.cursor = cursor;
+            this.selectionBox = selectionBox;
+            this.isSelected = isSelecting;
+            this.points = points ?? new List<Vector2>();
+            this.pointState = pointState ?? new List<bool>();
+        }
     }
 }
