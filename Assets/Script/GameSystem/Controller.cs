@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Threading;
 using System;
-using System.IO;
 using UnityEditor;
 
 public class Controller : MonoBehaviour
@@ -131,7 +127,7 @@ public class Controller : MonoBehaviour
             int index = Array.IndexOf(gameManager._playerId, gameManager._tracked.tracked.people[n].person_id);
             if (index == -1) continue;
 
-            if (index == gamepadIndex) continue;
+            // if (index == gamepadIndex) continue;
             for(int m = 0; m < gameManager._players[index].pointState.Count; m++)
             {
                 Debug.Log("Test");

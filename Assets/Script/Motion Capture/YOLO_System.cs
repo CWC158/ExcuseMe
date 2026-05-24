@@ -1,15 +1,11 @@
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
-using UnityEditor;
 using System.Text;
 using System.Threading;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
-using System.Drawing;
 
 public class YOLODatas : MonoBehaviour
 {

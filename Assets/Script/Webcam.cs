@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine.UI;
 using System;
 

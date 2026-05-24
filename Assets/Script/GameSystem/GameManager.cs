@@ -1,13 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
-using System.Threading;
 using System;
-using System.IO;
 using UnityEditor;
 
 public class GameManager : MonoBehaviour
@@ -22,17 +17,11 @@ public class GameManager : MonoBehaviour
     private Mask mask;
     //---------------------------------------------------------
     public bool[] _ready;
-    [SerializeField]private string folder;
-    public static event Action _start;
-    public static event Action _stop;
-    private bool gameRunning;
-    //---------------------------------------------------------
-    private string record;
-    private int phase;
+    public bool gameRunning;
     //---------------------------------------------------------
     private Controller controller;
-    [SerializeField] private RawImage[] pictures;
     private UITrigger uiTrigger;
+    private GameRecorder screenShots;
     public bool isSetup = false;
     //private DatasToJson json = new DatasToJson();
     void Awake()
@@ -41,19 +30,10 @@ public class GameManager : MonoBehaviour
         mask = FindFirstObjectByType<Mask>();
         controller = FindFirstObjectByType<Controller>();
         uiTrigger = FindFirstObjectByType<UITrigger>();
+        screenShots = FindFirstObjectByType<GameRecorder>();
     }
     void Start()
     {
-        _start += () =>GameStart(out gameRunning);
-        _stop += () =>GameStop(out gameRunning);
-
-        folder = "Assets/Screenshots";
-
-        if (!Directory.Exists(folder))
-        {
-            Directory.CreateDirectory(folder);
-        }
-
         _tracked.StartLoad();
         StartCoroutine(UpdatePlayerData());
     }
@@ -171,12 +151,11 @@ public class GameManager : MonoBehaviour
         PlayerHidden();
         uiTrigger.triggerNum = 2;
 
-        record = DateTime.Now.ToString("MMdd_HHmmss");
-        StartCoroutine(Timeline());
+        StartCoroutine(screenShots.Timeline());
 
         gameRunning = true;
     }
-    private void GameStop(out bool gameRunning)
+    public void GameStop(out bool gameRunning)
     {
         for(int i = 0; i < _ready.Length; i++)
         {
@@ -185,15 +164,6 @@ public class GameManager : MonoBehaviour
         gameRunning = false;
         controller.enabled = false;
 
-         for(int i = 0; i < pictures.Length; i++)
-        {
-            Texture2D loadedTexture = new Texture2D(1, 1);
-            string path = folder + "/" + record + $"__{i}" + ".png";
-            byte[] pic = File.ReadAllBytes(path);
-
-            loadedTexture.LoadImage(pic);
-            pictures[i].texture = loadedTexture;
-        }
         uiTrigger.triggerNum = 3;
         #if UNITY_EDITOR
         AssetDatabase.Refresh();
@@ -204,73 +174,7 @@ public class GameManager : MonoBehaviour
         if(_ready.All(x => x == true))
         {
             Debug.Log("All Players are Ready. Starting the Game...");
-            _start?.Invoke();
-        }
-    }
-    IEnumerator Timeline()
-    {
-        string file = ""; 
-        phase = 0;
-
-        while(true)
-        {
-            switch (phase)
-            {
-                case 0:
-                    if (uiTrigger.director.time >= 6f)
-                    {
-                        Debug.Log("Take Screenshot 1");
-                        file = $"{folder}/{record}__0.png";
-                        ScreenCapture.CaptureScreenshot(file);
-                        phase = 1;
-                    }
-                    break;
-
-                case 1:
-                    if (uiTrigger.director.time >= 17f)
-                    {
-                        Debug.Log("Start!!!");
-                        PlayerShow();
-                        phase = 2;
-                    }
-                    break;
-
-                case 2:
-                    if (uiTrigger.director.time >= 28.25f)
-                    {
-                        Debug.Log("Take Screenshot 2");
-                        file = $"{folder}/{record}__1.png";
-                        ScreenCapture.CaptureScreenshot(file);
-                        phase = 3;
-                    }
-                    break;
-
-                case 3:
-                    if (uiTrigger.director.time >= 38.5f)
-                    {
-                        Debug.Log("Take Screenshot 3");
-                        file = $"{folder}/{record}__2.png";
-                        ScreenCapture.CaptureScreenshot(file);
-                        phase = 4;
-                    }
-                    break;
-
-                case 4:
-                    if (uiTrigger.director.time >= uiTrigger.director.duration)
-                    {
-                        Debug.Log("Take Screenshot 4");
-                        file = $"{folder}/{record}__3.png";
-                        ScreenCapture.CaptureScreenshot(file);
-                        phase = 5;
-                        yield return null;
-
-                        Debug.Log("Game Stop by Timeline");
-                        _stop?.Invoke();
-                        yield break;
-                    }
-                    break;
-            }
-            yield return new WaitForSeconds(0.05f); 
+            GameStart(out gameRunning);
         }
     }
     public void PlayerHidden()
