@@ -16,11 +16,11 @@ public class Controller : MonoBehaviour
     [SerializeField] public Gamepad[] gamePads;
 
     [Tooltip("cursors of each player")]
-    [SerializeField] public RectTransform[] _cursors;
+    [SerializeField] public GameObject[] _cursors;
     [SerializeField] private float cursorSpeed = 100f;
 
     [Tooltip("Selection boxes of each player")]
-    [SerializeField] public RectTransform[] _selectionbox;
+    [SerializeField] public GameObject[] _selectionbox;
     [SerializeField] public bool[] _state;
     //---------------------------------------------------------
     private Vector2[] cursorPos;
@@ -41,14 +41,14 @@ public class Controller : MonoBehaviour
     {
         Gamepad gamePad = gamePads[gamepadIndex];
         Vector2 leftStick = gamePad.leftStick.ReadValue();
-        _cursors[gamepadIndex].anchoredPosition += leftStick * cursorSpeed * Time.deltaTime;
+        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition += leftStick * cursorSpeed * Time.deltaTime;
 
-        _cursors[gamepadIndex].anchoredPosition = new Vector2(
-            Mathf.Clamp(_cursors[gamepadIndex].anchoredPosition.x, 0, Screen.width),
-            Mathf.Clamp(_cursors[gamepadIndex].anchoredPosition.y, 0, Screen.height)
+        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(
+            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.x, 0, Screen.width),
+            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.y, 0, Screen.height)
             );
 
-        cursorPos[gamepadIndex] = _cursors[gamepadIndex].anchoredPosition;
+        cursorPos[gamepadIndex] = _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition;
     }
     // Calculate the size and position of the selection box based on the start and current mouse positions for each player
     void SelectionBox(int gamepadIndex)
@@ -57,8 +57,8 @@ public class Controller : MonoBehaviour
 
         Vector2 selectionSize = cursorPos[gamepadIndex] - cursorStartPos[gamepadIndex];
 
-        _selectionbox[gamepadIndex].sizeDelta = new Vector2(Mathf.Abs(selectionSize.x), Mathf.Abs(selectionSize.y));
-        _selectionbox[gamepadIndex].anchoredPosition = new Vector2(cursorStartPos[gamepadIndex].x + selectionSize.x / 2f, cursorStartPos[gamepadIndex].y + selectionSize.y / 2f);
+        _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Abs(selectionSize.x), Mathf.Abs(selectionSize.y));
+        _selectionbox[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(cursorStartPos[gamepadIndex].x + selectionSize.x / 2f, cursorStartPos[gamepadIndex].y + selectionSize.y / 2f);
     }
     // Capture the cursor's Position value of start for each player and store it in the mouseStartPos array
     void StartedSelecting(int gamepadIndex)

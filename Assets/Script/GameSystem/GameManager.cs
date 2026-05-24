@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     private Coroutine coroutine;
     //---------------------------------------------------------
     private Controller controller;
+    private RawImage[] pictures;
     //private DatasToJson json = new DatasToJson();
     void Awake()
     {
@@ -81,12 +82,12 @@ public class GameManager : MonoBehaviour
     {
         public int playerId;
         public int padId;
-        public RectTransform cursor;
-        public RectTransform selectionBox;
+        public GameObject cursor;
+        public GameObject selectionBox;
         public bool isSelected;
         public List<Vector2> points;
         public List<bool> pointState;
-        public PlayerData(int playerId = 0, int padId = 0, RectTransform cursor = null, RectTransform selectionBox = null, bool isSelecting = false, List<Vector2> points = null, List<bool> pointState = null)
+        public PlayerData(int playerId = 0, int padId = 0, GameObject cursor = null, GameObject selectionBox = null, bool isSelecting = false, List<Vector2> points = null, List<bool> pointState = null)
         {
             this.playerId = playerId;
             this.padId = padId;
@@ -123,7 +124,7 @@ public class GameManager : MonoBehaviour
 
                 float xRange = Math.Abs(corners[2].x - corners[1].x);
                 float yRange = Math.Abs(corners[1].y - corners[0].y);
-                Vector2 selectionCenter = _players[gamepadIndex].selectionBox.anchoredPosition;
+                Vector2 selectionCenter = _players[gamepadIndex].selectionBox.GetComponent<RectTransform>().anchoredPosition;
 
                 if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(position.y - selectionCenter.y) <= yRange / 2f)
                 {
@@ -169,7 +170,7 @@ public class GameManager : MonoBehaviour
 
         time = 0f;
         captureTime = interval;
-        num = 0;
+        num = 1;
         gameRunning = false;
         
         _playerId = new int[controller.gamePads.Length];
@@ -235,13 +236,13 @@ public class GameManager : MonoBehaviour
             StopCoroutine(coroutine);
         }
         record = DateTime.Now.ToString("MMdd_HHmmss");
-        coroutine = StartCoroutine(Run());
+        coroutine = StartCoroutine(ScreenShots());
 
         gameRunning = true;
     }
-    IEnumerator Run()
+    IEnumerator ScreenShots()
     {
-        while(num < 3)
+        while(num < 4)
         {
             time += Time.deltaTime;
             if(time >= captureTime)
@@ -249,6 +250,7 @@ public class GameManager : MonoBehaviour
                 num += 1;
                 string file = folder + "/" + record + $"__{num}" + ".png";
                 ScreenCapture.CaptureScreenshot(file);
+
                 captureTime += interval;
             }
             yield return null;
@@ -260,6 +262,16 @@ public class GameManager : MonoBehaviour
         gameRunning = false;
         StopCoroutine(coroutine);
         StopCoroutine(controller.coroutine);
+
+         for(int i = 0; i < pictures.Length; i++)
+        {
+            Texture2D loadedTexture = new Texture2D(1, 1);
+            string path = folder + "/" + record + $"__{i}" + ".png";
+            byte[] pic = File.ReadAllBytes(path);
+
+            loadedTexture.LoadImage(pic);
+            pictures[i].texture = loadedTexture;
+        }
 
         #if UNITY_EDITOR
         AssetDatabase.Refresh();
