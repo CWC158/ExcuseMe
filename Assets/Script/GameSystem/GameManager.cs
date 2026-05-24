@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.Log(e);
+                Debug.Log(e.Message);
             }
         }
     }
@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.LogWarning("Waiting for Tracked Data...：" + e);
+                Debug.LogWarning("Waiting for Tracked Data...：" + e.Message);
             }
             yield return null;
         }
@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
             catch(Exception e)
             {
                 _playerId[i] = -1;
-                Debug.LogWarning($"Player {i} not found ：" + e);
+                Debug.LogWarning($"Player {i} not found ：" + e.Message);
             }
         }
 

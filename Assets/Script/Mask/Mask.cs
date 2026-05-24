@@ -16,8 +16,6 @@ public class Mask : MonoBehaviour
     {
         gameManager = GameObject.FindFirstObjectByType<GameManager>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         try
@@ -26,7 +24,7 @@ public class Mask : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogWarning("Not Yet Setup...");
+            Debug.LogWarning("Not Yet Setup...：" + e.Message);
         }
     }
     void PasteStickers()

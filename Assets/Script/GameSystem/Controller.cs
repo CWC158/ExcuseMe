@@ -35,87 +35,6 @@ public class Controller : MonoBehaviour
     {
         gameManager = FindFirstObjectByType<GameManager>();
     }
-    // Capture the current cursor's Position value for each player and store it in the mousePos array
-    private void CursorMovement(int gamepadIndex)
-    {
-        Gamepad gamePad = gamePads[gamepadIndex];
-        Vector2 leftStick = gamePad.leftStick.ReadValue();
-        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition += leftStick * cursorSpeed * Time.deltaTime;
-
-        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(
-            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.x, 0, Screen.width),
-            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.y, 0, Screen.height)
-            );
-
-        cursorPos[gamepadIndex] = _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition;
-    }
-    // Calculate the size and position of the selection box based on the start and current mouse positions for each player
-    private void SelectionBox(int gamepadIndex)
-    {
-        if (!_state[gamepadIndex]) return ;
-
-        Vector2 selectionSize = cursorPos[gamepadIndex] - cursorStartPos[gamepadIndex];
-
-        _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Abs(selectionSize.x), Mathf.Abs(selectionSize.y));
-        _selectionbox[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(cursorStartPos[gamepadIndex].x + selectionSize.x / 2f, cursorStartPos[gamepadIndex].y + selectionSize.y / 2f);
-    }
-    // Capture the cursor's Position value of start for each player and store it in the mouseStartPos array
-    private void StartedSelecting(int gamepadIndex)
-    {
-        if(gamePads[gamepadIndex].buttonNorth.wasPressedThisFrame && _state[gamepadIndex] == false)
-        {
-
-            _state[gamepadIndex] = true;
-
-            cursorStartPos[gamepadIndex] = cursorPos[gamepadIndex];
-            _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = true;
-
-            Debug.Log("Player " + (gamepadIndex + 1) + " is selecting.");
-        }
-    }
-    // Capture the cursor's Position value of End for each player and store it in the mouseEndPos array
-    private void CancelledSelecting(int gamepadIndex)
-    {
-        if(gamePads[gamepadIndex].buttonNorth.wasReleasedThisFrame && _state[gamepadIndex] == true)
-        {
-            _state[gamepadIndex] = false;
-
-            cursorEndPos[gamepadIndex] = cursorPos[gamepadIndex];
-
-            Debug.Log("Player " + (gamepadIndex + 1) + " cancelled selection.");
-
-            CalculatePointState(gamepadIndex);
-            _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = false;
-        }
-    }
-    private void CalculatePointState(int gamepadIndex)
-    {
-        Vector3[] corners = new Vector3[4];
-        gameManager._players[gamepadIndex].selectionBox.GetComponent<RectTransform>().GetWorldCorners(corners);
-
-        for (int n = 0; n < gameManager._tracked.tracked.people.Length; n++)
-        {
-            int index = Array.IndexOf(gameManager._playerId, gameManager._tracked.tracked.people[n].person_id);
-            if (index == -1) continue;
-
-            // if (index == gamepadIndex) continue;
-            for(int m = 0; m < gameManager._players[index].pointState.Count; m++)
-            {
-                Debug.Log("Test");
-                Vector2 position = gameManager._players[index].points[m];
-
-                float xRange = Math.Abs(corners[2].x - corners[1].x);
-                float yRange = Math.Abs(corners[1].y - corners[0].y);
-                Vector2 selectionCenter = gameManager._players[gamepadIndex].selectionBox.GetComponent<RectTransform>().anchoredPosition;
-
-                if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(position.y - selectionCenter.y) <= yRange / 2f)
-                {
-                    gameManager._players[index].pointState[m] = true;
-                }
-            }
-        }
-    }
-    // Continuously check for player input and update the cursor position, selection points, and selection box for each player
     void Update()
     {
         if (gamePads == null || gamePads.Length == 0)
@@ -149,11 +68,86 @@ public class Controller : MonoBehaviour
             }
             catch(Exception e)
             {
-                Debug.Log($"Gamepads {i} is not available...");
+                Debug.Log($"Gamepads {i} is not available...：" + e.Message);
             }
         }
     }
-    // Update the playersData array with the current cursor, selection box, selecting state, selection points, and landmark be selected for each player
+    private void CursorMovement(int gamepadIndex)
+    {
+        Gamepad gamePad = gamePads[gamepadIndex];
+        Vector2 leftStick = gamePad.leftStick.ReadValue();
+        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition += leftStick * cursorSpeed * Time.deltaTime;
+
+        _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(
+            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.x, 0, Screen.width),
+            Mathf.Clamp(_cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition.y, 0, Screen.height)
+            );
+
+        cursorPos[gamepadIndex] = _cursors[gamepadIndex].GetComponent<RectTransform>().anchoredPosition;
+    }
+    private void SelectionBox(int gamepadIndex)
+    {
+        if (!_state[gamepadIndex]) return ;
+
+        Vector2 selectionSize = cursorPos[gamepadIndex] - cursorStartPos[gamepadIndex];
+
+        _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Abs(selectionSize.x), Mathf.Abs(selectionSize.y));
+        _selectionbox[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(cursorStartPos[gamepadIndex].x + selectionSize.x / 2f, cursorStartPos[gamepadIndex].y + selectionSize.y / 2f);
+    }
+    private void StartedSelecting(int gamepadIndex)
+    {
+        if(gamePads[gamepadIndex].buttonNorth.wasPressedThisFrame && _state[gamepadIndex] == false)
+        {
+
+            _state[gamepadIndex] = true;
+
+            cursorStartPos[gamepadIndex] = cursorPos[gamepadIndex];
+            _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = true;
+
+            Debug.Log("Player " + (gamepadIndex + 1) + " is selecting.");
+        }
+    }
+    private void CancelledSelecting(int gamepadIndex)
+    {
+        if(gamePads[gamepadIndex].buttonNorth.wasReleasedThisFrame && _state[gamepadIndex] == true)
+        {
+            _state[gamepadIndex] = false;
+
+            cursorEndPos[gamepadIndex] = cursorPos[gamepadIndex];
+
+            Debug.Log("Player " + (gamepadIndex + 1) + " cancelled selection.");
+
+            CalculatePointState(gamepadIndex);
+            _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = false;
+        }
+    }
+    private void CalculatePointState(int gamepadIndex)
+    {
+        Vector3[] corners = new Vector3[4];
+        gameManager._players[gamepadIndex].selectionBox.GetComponent<RectTransform>().GetWorldCorners(corners);
+
+        for (int n = 0; n < gameManager._tracked.tracked.people.Length; n++)
+        {
+            int index = Array.IndexOf(gameManager._playerId, gameManager._tracked.tracked.people[n].person_id);
+            if (index == -1) continue;
+
+            if (index == gamepadIndex) continue;
+            for(int m = 0; m < gameManager._players[index].pointState.Count; m++)
+            {
+                Debug.Log("Test");
+                Vector2 position = gameManager._players[index].points[m];
+
+                float xRange = Math.Abs(corners[2].x - corners[1].x);
+                float yRange = Math.Abs(corners[1].y - corners[0].y);
+                Vector2 selectionCenter = gameManager._players[gamepadIndex].selectionBox.GetComponent<RectTransform>().anchoredPosition;
+
+                if(Math.Abs(position.x - selectionCenter.x) <= xRange / 2f && Math.Abs(position.y - selectionCenter.y) <= yRange / 2f)
+                {
+                    gameManager._players[index].pointState[m] = true;
+                }
+            }
+        }
+    }
     public void Reload()
     {
         gamePads = Gamepad.all.ToArray();

@@ -27,9 +27,10 @@ public class YOLODatas : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        isRunning = true;
         udpClient = new UdpClient(port);
         serverEndPoint = new IPEndPoint(IPAddress.Any, port);
-        isRunning = true;
+
         for (int i = 0; i < points.Length; i++)
         {
             points[i] = new List<Vector2>();

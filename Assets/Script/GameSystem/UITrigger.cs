@@ -66,6 +66,7 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
                 OnGameStop();
                 break;
         }
+        
         if(triggerNum == 1)
         {
             ReadyButton();
@@ -104,5 +105,4 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
         UI[3].SetActive(true);
         director.Stop();
     }
-
 }

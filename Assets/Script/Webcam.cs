@@ -18,8 +18,10 @@ public class Webcam : MonoBehaviour
     [SerializeField] private RawImage rawImage;
     [SerializeField] private Texture2D imageTexture;
     private bool loaded;
+    private bool isRunning;
     void Awake()
     {
+        isRunning = true;
         imageTexture = new Texture2D(2, 2);
         rawImage.texture = imageTexture;
 
@@ -31,7 +33,7 @@ public class Webcam : MonoBehaviour
     }
     void reciveImage()
     {
-        while (true)
+        while (isRunning)
         {
             try
             {
@@ -47,7 +49,7 @@ public class Webcam : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("Image loading failed");
+                Debug.Log("Image loading failed：" + e.Message);
             }
         }
     }
@@ -62,11 +64,12 @@ public class Webcam : MonoBehaviour
             }
         }
     }
-    void OApplicationQuit()
+    void OnApplicationQuit()
     {
+        isRunning = false;
         if(thread != null && thread.IsAlive)
         {
-            thread.Abort();
+            thread.Join();
         }
         if(udpClient != null)
         {
