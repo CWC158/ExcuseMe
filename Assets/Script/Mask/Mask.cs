@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class Mask : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private List<RawImage>[] stickers = new List<RawImage>[4];
-    private GameSystem gameSystem;
+    private List<RawImage>[] stickers;
+    private GameManager gameManager;
     [SerializeField] private Texture2D texture;
-    private List<bool>[] pasteState = new List<bool>[4];
+    private List<bool>[] pasteState;
     public Transform[] uiParents;
     void Start()
     {
-        gameSystem = GameObject.FindFirstObjectByType<GameSystem>();
+        gameManager = GameObject.FindFirstObjectByType<GameManager>();
     }
 
     // Update is called once per frame
@@ -26,18 +26,18 @@ public class Mask : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("No Datas");
+            Debug.Log(e);
         }
     }
     void PasteStickers()
     {
-        if(gameSystem != null)
+        if(gameManager != null)
         {
-            for(int i = 0; i < gameSystem._players.Length; i++)
+            for(int i = 0; i < gameManager._players.Length; i++)
             {
-                for(int j = 0; j < gameSystem._players[i].pointState.Count; j++)
+                for(int j = 0; j < gameManager.pointState[i].Count; j++)
                 {
-                    if(gameSystem.pointState[i][j] == true && pasteState[i][j] == false)
+                    if(gameManager.pointState[i][j] == true && pasteState[i][j] == false)
                     {
                         GameObject instance = new GameObject("Sticker");
                         instance.transform.SetParent(uiParents[i] != null ? uiParents[i] : transform, false);
@@ -48,17 +48,20 @@ public class Mask : MonoBehaviour
                         stickers[i][j] = img;
                         pasteState[i][j] = true;
                     }
+
                     if(stickers[i][j] != null && pasteState[i][j] == true)
                     {
-                        Vector2 pos = new Vector2(gameSystem._players[i].points[j].x, gameSystem._players[i].points[j].y);
+                        Vector2 pos = new Vector2(gameManager._players[i].points[j].x, gameManager._players[i].points[j].y);
                         stickers[i][j].rectTransform.position = pos;
                     }
                 }
             }
         }
     }
-    public void LoadDatas()
+    public void Reload()
     {
+        pasteState = new List<bool>[gameManager._players.Length];
+        stickers = new List<RawImage>[gameManager._players.Length];
         for(int k = 0; k < uiParents.Length; k++)
         {
             foreach(Transform child in uiParents[k] != null ? uiParents[k] : transform)
@@ -69,7 +72,7 @@ public class Mask : MonoBehaviour
         for(int i = 0; i < stickers.Length; i++)
         {
             stickers[i] = new List<RawImage>();
-            for(int j = 0; j < gameSystem.pointState[i].Count; j++)
+            for(int j = 0; j < gameManager._players[i].points.Count; j++)
             {
                 stickers[i].Add(null);
             }
@@ -77,7 +80,7 @@ public class Mask : MonoBehaviour
         for(int i = 0; i < pasteState.Length; i++)
         {
             pasteState[i] = new List<bool>();
-            for(int j = 0; j < gameSystem.pointState[i].Count; j++)
+            for(int j = 0; j < gameManager._players[i].points.Count; j++)
             {
                 pasteState[i].Add(false);
             }

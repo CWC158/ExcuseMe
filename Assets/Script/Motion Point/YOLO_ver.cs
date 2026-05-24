@@ -315,7 +315,7 @@ public class ControllerSystemYOLO : MonoBehaviour
             thread.Start();
         }
 
-        mask.LoadDatas();
+        mask.Reload();
     }
     // [Serializable] public class DatasToJson
     // {

@@ -21,14 +21,15 @@ public class YOLODatas : MonoBehaviour
     private DatasToJson json = new DatasToJson();
     public List<Vector2>[] points = new List<Vector2>[4];
     public Tracked tracked;
-    private GameSystem gameSystem;
+    // private GameManager gameSystem;
     private List<bool>[] pointState = new List<bool>[4];
-    private List<Vector2> pre = new List<Vector2>();
+    private bool isRunning;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         udpClient = new UdpClient(port);
         serverEndPoint = new IPEndPoint(IPAddress.Any, port);
+        isRunning = true;
         for (int i = 0; i < points.Length; i++)
         {
             points[i] = new List<Vector2>();
@@ -44,45 +45,43 @@ public class YOLODatas : MonoBehaviour
     }
     void Start()
     {
-        gameSystem = FindFirstObjectByType<GameSystem>();
-        Debug.Log(serverEndPoint);
+        // gameSystem = FindFirstObjectByType<GameManager>();
+        // Debug.Log(serverEndPoint);
     }
 
     void reciveDatas()
     {
-        while (true)
+        while (isRunning)
         {
             if (udpClient.Available > 0)
             {
                 data = udpClient.Receive(ref serverEndPoint);
-                lock(this)
-                {
-                    string input = Encoding.UTF8.GetString(data);
-                    string wrappedJson = "{\"people\":" + input + "}";
+
+                string input = Encoding.UTF8.GetString(data);
+                string wrappedJson = "{\"people\":" + input + "}";
 
                     // json.input = wrappedJson;
                     // json.saveJsonToFile(Application.dataPath + "/data.json");
 
-                    try
+                try
+                {
+                    tracked = JsonUtility.FromJson<Tracked>(wrappedJson);
+
+                    for (int i = 0; i < tracked.people.Length; i++)
                     {
-                        tracked = JsonUtility.FromJson<Tracked>(wrappedJson);
+                        Person person = tracked.people[i];
+                        points[i].Clear();
 
-                        for (int i = 0; i < tracked.people.Length; i++)
+                        for (int j = 0; j < person.keypoints.Length; j++)
                         {
-                            Person person = tracked.people[i];
-                            points[i].Clear();
-
-                            for (int j = 0; j < person.keypoints.Length; j++)
-                            {
-                                Vector2 point = new Vector2(person.keypoints[j].position[0], person.keypoints[j].position[1]);
-                                points[i].Add(point);
-                            }
+                            Vector2 point = new Vector2(person.keypoints[j].position[0], person.keypoints[j].position[1]);
+                            points[i].Add(point);
                         }
                     }
-                    catch (Exception e) 
-                    {
-                        Debug.LogError("Data Lose" + e.Message);
-                    }
+                }
+                catch (Exception e) 
+                {
+                    Debug.LogError("Data Lose" + e.Message);
                 }
             }
         }
@@ -166,11 +165,12 @@ public class YOLODatas : MonoBehaviour
             this.people = people ?? new Person[4];
         }
     }
-    void OApplicationQuit()
+    void OnApplicationQuit()
     {
+        isRunning = false;
         if(thread != null && thread.IsAlive)
         {
-            thread.Abort();
+            thread.Join();
         }
         if(udpClient != null)
         {
