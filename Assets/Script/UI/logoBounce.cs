@@ -9,12 +9,17 @@ public class logoBounce : MonoBehaviour
     [Tooltip("移動速度")]
     public float speed = 300f; 
 
+    [Header("限定移動範圍尺寸")]
+    public float targetWidth = 2048f;
+    public float targetHeight = 1152f;
+
     private Vector2 moveDirection;
 
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        // 尋找最上層的 Canvas
+        
+        // 尋找最上層的 Canvas，用來計算縮放比例
         parentCanvas = GetComponentInParent<Canvas>();
 
         // 初始隨機方向
@@ -26,40 +31,64 @@ public class logoBounce : MonoBehaviour
 
     void Update()
     {
-        // 1. 先照常移動
-        rectTransform.anchoredPosition += moveDirection * speed * Time.deltaTime;
+        // 1. 先照常移動 (利用 Translate 直接在世界空間移動，無視 UI 錨點干擾)
+        Vector3 moveStep = (Vector3)(moveDirection * speed * Time.deltaTime);
+        rectTransform.Translate(moveStep, Space.World);
 
-        // 2. 核心大絕招：直接把 Logo 的四個角換算成「真正的螢幕坐標 (Screen Space)」
+        // 2. 抓取 Logo 目前在世界空間（World Space）中的四個角座標
         Vector3[] corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
         // corners[0] = 左下, corners[1] = 左上, corners[2] = 右上, corners[3] = 右下
 
-        // 如果有 Canvas，用 Canvas 的相機或螢幕大小來抓標準邊界
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
+        // 3. 計算 $2048 \times 1152$ 區域在世界空間中的實際大小
+        // 必須乘上 Canvas 的 lossyScale，這樣在任何解析度下才會等比例縮放
+        float canvasScaleX = parentCanvas != null ? parentCanvas.transform.lossyScale.x : 1f;
+        float canvasScaleY = parentCanvas != null ? parentCanvas.transform.lossyScale.y : 1f;
+        
+        float worldWidth = targetWidth * canvasScaleX;
+        float worldHeight = targetHeight * canvasScaleY;
 
-        // 3. 檢查左/右邊界 (用世界/螢幕坐標判斷)
-        if (corners[0].x < 0) // 左邊超出螢幕
+        // 以螢幕/Canvas 中心點為基準，算出 2048x1152 的四個世界邊界
+        float screenCenterX = Screen.width / 2f;
+        float screenCenterY = Screen.height / 2f;
+
+        float minWorldX = screenCenterX - (worldWidth / 2f);
+        float maxX = screenCenterX + (worldWidth / 2f);
+        float minWorldY = screenCenterY - (worldHeight / 2f);
+        float maxWorldY = screenCenterY + (worldHeight / 2f);
+
+        // 4. 進行邊界碰撞檢查與反彈
+        Vector3 currentWorldPos = rectTransform.position;
+
+        // 檢查左右邊界
+        if (corners[0].x < minWorldX) // 撞到左邊
         {
             moveDirection.x = Mathf.Abs(moveDirection.x); // 強制往右
-            rectTransform.anchoredPosition += new Vector2(5f, 0f); // 稍微往內推，防止卡死
+            float overlap = minWorldX - corners[0].x;
+            currentWorldPos.x += overlap + 1f; // 推回邊界內
         }
-        else if (corners[2].x > screenWidth) // 右邊超出螢幕
+        else if (corners[2].x > maxX) // 撞到右邊
         {
             moveDirection.x = -Mathf.Abs(moveDirection.x); // 強制往左
-            rectTransform.anchoredPosition += new Vector2(-5f, 0f);
+            float overlap = corners[2].x - maxX;
+            currentWorldPos.x -= (overlap + 1f);
         }
 
-        // 4. 檢查上/下邊界
-        if (corners[0].y < 0) // 下邊超出螢幕
+        // 檢查上下邊界
+        if (corners[0].y < minWorldY) // 撞到下邊
         {
             moveDirection.y = Mathf.Abs(moveDirection.y); // 強制往上
-            rectTransform.anchoredPosition += new Vector2(0f, 5f);
+            float overlap = minWorldY - corners[0].y;
+            currentWorldPos.y += overlap + 1f;
         }
-        else if (corners[1].y > screenHeight) // 上邊超出螢幕
+        else if (corners[1].y > maxWorldY) // 撞到上邊
         {
             moveDirection.y = -Mathf.Abs(moveDirection.y); // 強制往下
-            rectTransform.anchoredPosition += new Vector2(0f, -5f);
+            float overlap = corners[1].y - maxWorldY;
+            currentWorldPos.y -= (overlap + 1f);
         }
+
+        // 套用修正後的世界座標
+        rectTransform.position = currentWorldPos;
     }
 }
