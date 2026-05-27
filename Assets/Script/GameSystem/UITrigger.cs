@@ -1,48 +1,83 @@
 using UnityEngine;
+using System;
 using System.Linq;
 using UnityEngine.Playables;
 using UnityEngine.UI;
-public class UITrigger : MonoBehaviour
+using UnityEngine.InputSystem;
+public class UITrigger : MonoBehaviour, IObserver<InputControl>
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private GameObject[] UI;
     [SerializeField] private GameObject[] readybutton;
-    private int triggerNum;
+    public int triggerNum;
     private GameManager gameManager;
-    private Controller controller;
     public PlayableDirector director;
-    void Awake()
+    private IDisposable anyButtonPressListener;
+
+    void OnEnable()
     {
-        gameManager = FindFirstObjectByType<GameManager>();
-        controller = FindFirstObjectByType<Controller>();
-        director.Stop();
+        anyButtonPressListener = InputSystem.onAnyButtonPress.Subscribe(this);
     }
+
+    void OnDisable()
+    {
+        if (anyButtonPressListener != null)
+        {
+            anyButtonPressListener.Dispose();
+        }
+    }
+
+    public void OnNext(InputControl control)
+    {
+        if(triggerNum == 0 && control.device is Gamepad && gameManager.isSetup)
+        {
+            triggerNum++;
+            UI[0].SetActive(false);
+            UI[1].SetActive(true);
+            gameManager.PlayerShow();
+        }
+    }
+
+    public void OnCompleted() { }
+    public void OnError(Exception error) { }
+
     void Start()
     {
         gameManager = FindFirstObjectByType<GameManager>();
-        controller = FindFirstObjectByType<Controller>();
         director = FindFirstObjectByType<PlayableDirector>();
         triggerNum = 0;
-        UI[0].SetActive(true);
-        UI[1].SetActive(false);
-        UI[2].SetActive(false);
-        UI[3].SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        switch(triggerNum)
         {
-            triggerNum++;
-            UI[0].SetActive(false);
-            UI[1].SetActive(true);
+            case 0:
+                GameMenu();
+                break;
+            case 1:
+                ReadyButton();
+                break;
+            case 2:
+                OnGameStart();
+                break;
+            case 3:
+                OnGameStop();
+                break;
         }
-
+        
         if(triggerNum == 1)
         {
             ReadyButton();
         }
+    }
+    private void GameMenu()
+    {
+        UI[0].SetActive(true);
+        UI[1].SetActive(false);
+        UI[2].SetActive(false);
+        UI[3].SetActive(false);
     }
     private void ReadyButton()
     {
@@ -60,18 +95,14 @@ public class UITrigger : MonoBehaviour
     }
     public void OnGameStart()
     {
-        Debug.Log(triggerNum);
         UI[1].SetActive(false);
         UI[2].SetActive(true);
-        StopCoroutine(controller.coroutine);
         director.Play();
     }
     public void OnGameStop()
     {
         UI[2].SetActive(false);
         UI[3].SetActive(true);
-        StopCoroutine(controller.coroutine);
         director.Stop();
     }
-
 }

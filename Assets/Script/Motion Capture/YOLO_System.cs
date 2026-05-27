@@ -1,15 +1,11 @@
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
-using UnityEditor;
 using System.Text;
 using System.Threading;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
-using System.Drawing;
 
 public class YOLODatas : MonoBehaviour
 {
@@ -27,9 +23,10 @@ public class YOLODatas : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        isRunning = true;
         udpClient = new UdpClient(port);
         serverEndPoint = new IPEndPoint(IPAddress.Any, port);
-        isRunning = true;
+
         for (int i = 0; i < points.Length; i++)
         {
             points[i] = new List<Vector2>();
