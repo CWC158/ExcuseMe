@@ -9,6 +9,7 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] private GameObject[] UI;
     [SerializeField] private GameObject[] readybutton;
+    [SerializeField] private GameObject[] webcam;
     public int triggerNum;
     private GameManager gameManager;
     public PlayableDirector director;
@@ -32,8 +33,6 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
         if(triggerNum == 0 && control.device is Gamepad && gameManager.isSetup)
         {
             triggerNum++;
-            UI[0].SetActive(false);
-            UI[1].SetActive(true);
             gameManager.PlayerShow();
         }
     }
@@ -78,9 +77,15 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
         UI[1].SetActive(false);
         UI[2].SetActive(false);
         UI[3].SetActive(false);
+        webcam[0].SetActive(true);
+        webcam[1].SetActive(false);
     }
     private void ReadyButton()
     {
+        UI[0].SetActive(false);
+        UI[1].SetActive(true);
+        webcam[0].SetActive(false);
+        webcam[1].SetActive(true);
         for(int i = 0; i < gameManager._ready.Length; i++)
         {
             if(gameManager._ready[i] == true)
@@ -96,13 +101,17 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
     public void OnGameStart()
     {
         UI[1].SetActive(false);
-        UI[2].SetActive(true);
+        UI[2].SetActive(true);      
+        webcam[0].SetActive(true);
+        webcam[1].SetActive(false);
         director.Play();
     }
     public void OnGameStop()
     {
         UI[2].SetActive(false);
         UI[3].SetActive(true);
+        webcam[0].SetActive(false);
+        webcam[1].SetActive(false);
         director.Stop();
     }
 }

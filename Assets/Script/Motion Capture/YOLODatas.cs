@@ -6,6 +6,7 @@ using System.Threading;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 public class YOLODatas : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class YOLODatas : MonoBehaviour
     private DatasToJson json = new DatasToJson();
     public List<Vector2>[] points = new List<Vector2>[4];
     public Tracked tracked;
-    // private GameManager gameSystem;
+    private GameManager gameSystem;
     private List<bool>[] pointState = new List<bool>[4];
     private bool isRunning;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -42,7 +43,7 @@ public class YOLODatas : MonoBehaviour
     }
     void Start()
     {
-        // gameSystem = FindFirstObjectByType<GameManager>();
+        gameSystem = FindFirstObjectByType<GameManager>();
         // Debug.Log(serverEndPoint);
     }
 
@@ -83,49 +84,51 @@ public class YOLODatas : MonoBehaviour
             }
         }
     }
-    // IEnumerator WriteData()
-    // {
-    //     while (true)
-    //     {
-    //         try
-    //         {
-    //             string log = "";
-    //             lock (this)
-    //             {
-    //                 pointState = gameSystem.pointState;
-    //                 if (tracked.people == null) continue;
-    //                 for (int i = 0; i < tracked.people.Length; i++)
-    //                 {
-    //                     log += $"player_id:{tracked.people[i].person_id}, ";
+    IEnumerator WriteData()
+    {
+        while (true)
+        {
+            try
+            {
+                string log = "";
+                lock (this)
+                {
+                    pointState = gameSystem.pointState;
+                    if (tracked.people == null) continue;
+                    for (int i = 0; i < tracked.people.Length; i++)
+                    {
+                        // log += $"player_id:{tracked.people[i].person_id}, ";
+                        log += $"{tracked.people[i].person_id}, ";
 
-    //                     for (int j = 0; j < points[i].Count; j++)
-    //                     {
-    //                         Vector2 point = points[i][j];
-    //                         try
-    //                         {
-    //                             log += $"point_id:{j}(position:[{point.x}, {point.y}], be_seleted:[{pointState[i][j]}]), ";
-    //                         }
-    //                         catch(Exception e)
-    //                         {
-    //                             Debug.Log(e);
-    //                         }
-    //                     }
-    //                     log += "\n";
-    //                 }
-    //                 // jsonDatas.jsonString = log;
-    //                 // string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-    //                 // string filePath = Path.Combine(desktopPath, "LandmarkPoints_Export.json");
-    //                 // File.WriteAllText(filePath, log);
-    //             }
-    //         }
-    //         catch(IOException e) 
-    //         {
-    //             Debug.LogError("Save failed" + e.Message);
-    //         }
-    //         // AssetDatabase.ImportAsset("Assets/landmarkpoints.json");
-    //         yield return null;
-    //     }
-    // }
+                        for (int j = 0; j < points[i].Count; j++)
+                        {
+                            Vector2 point = points[i][j];
+                            try
+                            {
+                                // log += $"point_id:{j}(position:[{point.x}, {point.y}], be_seleted:[{pointState[i][j]}]), ";
+                                log += $"{j}, {point.x}, {point.y}, {(pointState[i][j] ? 1 : 0)}]), ";
+                            }
+                            catch(Exception e)
+                            {
+                                Debug.Log(e);
+                            }
+                        }
+                        log += "\n";
+                    }
+                    json.input = log;
+                    string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    string filePath = Path.Combine(desktopPath, "LandmarkPoints_Export.json");
+                    File.WriteAllText(filePath, log);
+                }
+            }
+            catch(IOException e) 
+            {
+                Debug.LogError("Save failed" + e.Message);
+            }
+            // AssetDatabase.ImportAsset("Assets/landmarkpoints.json");
+            yield return null;
+        }
+    }
     [Serializable] public class DatasToJson
     {
         public string input;        
@@ -181,7 +184,7 @@ public class YOLODatas : MonoBehaviour
             thread = new Thread(new ThreadStart(reciveDatas));
             thread.IsBackground = true;
             thread.Start();
-            // StartCoroutine(WriteData());
+            StartCoroutine(WriteData());
         }
     }
 }

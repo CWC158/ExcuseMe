@@ -87,6 +87,13 @@ public class Controller : MonoBehaviour
 
         Vector2 selectionSize = cursorPos[gamepadIndex] - cursorStartPos[gamepadIndex];
 
+        if(Math.Abs(selectionSize.x * selectionSize.y) > 1500f)
+        {
+            _state[gamepadIndex] = false;
+            _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = Vector2.zero;
+            return;
+        }
+        
         _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Abs(selectionSize.x), Mathf.Abs(selectionSize.y));
         _selectionbox[gamepadIndex].GetComponent<RectTransform>().anchoredPosition = new Vector2(cursorStartPos[gamepadIndex].x + selectionSize.x / 2f, cursorStartPos[gamepadIndex].y + selectionSize.y / 2f);
     }

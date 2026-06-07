@@ -14,7 +14,7 @@ public class Webcam : MonoBehaviour
     private Thread thread;
     private byte[] image;
     private byte[] lastImage;
-    [SerializeField] private RawImage rawImage;
+    [SerializeField] private RawImage[] rawImage;
     [SerializeField] private Texture2D imageTexture;
     private bool loaded;
     private bool isRunning;
@@ -22,7 +22,10 @@ public class Webcam : MonoBehaviour
     {
         isRunning = true;
         imageTexture = new Texture2D(2, 2);
-        rawImage.texture = imageTexture;
+        for(int i = 0; i < rawImage.Length; i++)
+        {
+            rawImage[i].texture = imageTexture;
+        }
 
         udpClient = new UdpClient(port);
         serverEndPoint = new IPEndPoint(IPAddress.Any, port);

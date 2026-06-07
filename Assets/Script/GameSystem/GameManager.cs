@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     {
         _tracked.StartLoad();
         StartCoroutine(UpdatePlayerData());
+        PlayerHidden();
     }
     void Update()
     {
