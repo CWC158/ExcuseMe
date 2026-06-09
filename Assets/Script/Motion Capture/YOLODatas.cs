@@ -21,6 +21,7 @@ public class YOLODatas : MonoBehaviour
     private GameManager gameSystem;
     private List<bool>[] pointState = new List<bool>[4];
     private bool isRunning;
+    private UITrigger uiTrigger;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -44,6 +45,7 @@ public class YOLODatas : MonoBehaviour
     void Start()
     {
         gameSystem = FindFirstObjectByType<GameManager>();
+        uiTrigger = FindFirstObjectByType<UITrigger>();
         // Debug.Log(serverEndPoint);
     }
 
@@ -73,6 +75,11 @@ public class YOLODatas : MonoBehaviour
                         for (int j = 0; j < person.keypoints.Length; j++)
                         {
                             Vector2 point = new Vector2(person.keypoints[j].position[0], person.keypoints[j].position[1]);
+                            if(uiTrigger.triggerNum == 1)
+                            {
+                                point.x = Mathf.Lerp(47f, 1391f, point.x / 1920f);
+                                point.y = Mathf.Lerp(83f, 839f, point.y / 1080f);
+                            }
                             points[i].Add(point);
                         }
                     }

@@ -14,6 +14,7 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
     private GameManager gameManager;
     public PlayableDirector director;
     private IDisposable anyButtonPressListener;
+    public GameObject animator;
 
     void OnEnable()
     {
@@ -33,6 +34,7 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
         if(triggerNum == 0 && control.device is Gamepad && gameManager.isSetup)
         {
             triggerNum++;
+            animator.GetComponent<Animator>().SetBool("isFinished", false);
             gameManager.PlayerShow();
         }
     }
@@ -53,22 +55,61 @@ public class UITrigger : MonoBehaviour, IObserver<InputControl>
         switch(triggerNum)
         {
             case 0:
-                GameMenu();
+                // if(animator.GetComponent<Animator>().GetBool("isFinished") == false)
+                // {
+                //     animator.GetComponent<Animator>().SetTrigger("isActive");
+                // }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                {
+                    GameMenu();
+                }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
+                {
+                    animator.GetComponent<Animator>().SetBool("isFinished", true);
+                }
                 break;
             case 1:
-                ReadyButton();
+                // if(animator.GetComponent<Animator>().GetBool("isFinished") == false)
+                // {
+                //     animator.GetComponent<Animator>().SetTrigger("isActive");
+                // }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                {
+                    ReadyButton();
+                }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
+                {
+                    animator.GetComponent<Animator>().SetBool("isFinished", true);
+                }
                 break;
             case 2:
-                OnGameStart();
+                // if(animator.GetComponent<Animator>().GetBool("isFinished") == false)
+                // {
+                //     animator.GetComponent<Animator>().SetTrigger("isActive");
+                // }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                {
+                    OnGameStart();
+                }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
+                {
+                    animator.GetComponent<Animator>().SetBool("isFinished", true);
+                }
                 break;
             case 3:
-                OnGameStop();
+                // if(animator.GetComponent<Animator>().GetBool("isFinished") == false)
+                // {
+                //     animator.GetComponent<Animator>().SetTrigger("isActive");
+                // }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                {
+                    OnGameStop();
+                }
+                if(animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Transitiom") && animator.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f)
+                {
+                    animator.GetComponent<Animator>().SetBool("isFinished", true);
+                }
                 break;
-        }
-        
-        if(triggerNum == 1)
-        {
-            ReadyButton();
         }
     }
     private void GameMenu()

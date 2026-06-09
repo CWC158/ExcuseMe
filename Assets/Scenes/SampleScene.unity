@@ -1262,7 +1262,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 46.5, y: 82.95996}
+  m_AnchoredPosition: {x: 47, y: 83}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &559332949
@@ -2145,7 +2145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &974462564
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2259,7 +2259,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1014050557
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2491,7 +2491,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1134237270}
-  - component: {fileID: 1134237271}
   m_Layer: 5
   m_Name: intro
   m_TagString: Untagged
@@ -2531,64 +2530,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0, y: 0}
---- !u!320 &1134237271
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1134237269}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: d4d996b368b37c84b898e0a4c3509bee, type: 2}
-  m_InitialState: 0
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: -3975296417597875284, guid: d4d996b368b37c84b898e0a4c3509bee, type: 2}
-    value: {fileID: 0}
-  m_ExposedReferences:
-    m_References:
-    - f24a7a1b16a651244b255400d780c85d: {fileID: 1167389483}
-    - dbd149358e48d90498c3a27326b8f4e3: {fileID: 997904744}
-    - 10833a30a7cd97c4c853c065563014a5: {fileID: 1195587371}
-    - 39388d0fc0aae394a8a7c314a4fff045: {fileID: 447500292}
-    - aba3df89dd1d13d4daceed0235c7d919: {fileID: 408681323}
-    - 43608d9f4f7922a499c1d40d938295bd: {fileID: 712766068}
-    - ffaa3e75ba3bf7c4195d15a34d3ca216: {fileID: 1167389483}
-    - 5fb5ceeab752ad440b5cec95e4ab3862: {fileID: 712766068}
-    - 0437ba247a5711849bdde64b6bc927f1: {fileID: 712766068}
-    - 1aaeea876a6ff8949acbe95228ad5b77: {fileID: 0}
-    - 09b9f8fb9e21ba443beb96f517e1d16c: {fileID: 671652704}
-    - 0ac80133edfcede428cba6d2869e0293: {fileID: 447500292}
-    - ed969cebf82d5fe4181932781e63dd77: {fileID: 741217515}
-    - 3c4a3c2e8ed438c4db8e0f0157a9ee7a: {fileID: 1888037527}
-    - 492b108f526f8a24497d1ca261dc0e44: {fileID: 1888037527}
-    - 56501a73b2f66a340bdd11faa2f12e86: {fileID: 0}
-    - 08040d46051bb034ba601985b2a4fcb1: {fileID: 1773767763}
-    - 9dfc60d5c54083d47a405e31a63d5dc2: {fileID: 1741453598}
-    - ae923710eea281148b972f3e60693976: {fileID: 1888037527}
-    - 4d2d3fd932651ce43ae5320d3b4695bc: {fileID: 771977746}
-    - 875e593cfdee6d24fb2170f3f0218859: {fileID: 1195587371}
-    - 3723df1b22d496d4fbdec374278a17b4: {fileID: 1773767763}
-    - ad2bdbe8ac2bc0b4987787192d848dff: {fileID: 419944193}
-    - c5f1116f6669a124f821c762af74923b: {fileID: 1741453598}
-    - 4e1f7496c7f07bb4c93fbbbe369315b8: {fileID: 1773767763}
-    - 863134fc9c43c4c4fba080c409b2ecab: {fileID: 1195587371}
-    - 09e3ae1027b9e364a9dd3921ab300772: {fileID: 1167389483}
-    - 43dc57063e7388044bc135029d5cb715: {fileID: 0}
-    - a7a52b396bb045c498eb66e76df753d8: {fileID: 920479961}
-    - 9221e512bb1dd504887f71ab074a9af7: {fileID: 1741453598}
-    - b445926b5e918c1489f5a83c6ab7d70c: {fileID: 1741453598}
-    - 6bb63d6a2c1566c4d89a4ee495f07be0: {fileID: 1167389483}
-    - a691557f7b0b403478271737e08e5746: {fileID: 447500292}
-    - 1317e7a84fb8e504c8dada8f3d911a6e: {fileID: 997904744}
-    - 0e79ab65593d34945a4a6df86b6a95f2: {fileID: 741217515}
-    - 1bb8055533642fd46a943474c11a0ec5: {fileID: 1888037527}
-    - e6edc776bd2e5b643ab471eddd6dfb27: {fileID: 997904744}
-    - 5f54d32e717e4bc489d9253adb49a994: {fileID: 997904744}
-    - 5e18bb806c149be40bf0c5c014f49512: {fileID: 741217515}
 --- !u!1 &1138965590
 GameObject:
   m_ObjectHideFlags: 0
@@ -2959,7 +2900,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3919,7 +3860,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1732328762
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3932,13 +3873,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1885680526}
+  m_Father: {fileID: 1735731705}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 744.9, y: 451.2}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0, y: 0}
 --- !u!95 &1732328763
 Animator:
   serializedVersion: 7
@@ -4101,6 +4042,7 @@ RectTransform:
   - {fileID: 1885680526}
   - {fileID: 1543954025}
   - {fileID: 1014050557}
+  - {fileID: 1732328762}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4341,6 +4283,7 @@ MonoBehaviour:
   - {fileID: 559332947}
   triggerNum: 0
   director: {fileID: 1755853356}
+  animator: {fileID: 1732328761}
 --- !u!320 &1755853356
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -4417,7 +4360,7 @@ MonoBehaviour:
   - {fileID: 1360963328}
   - {fileID: 1123463027}
   - {fileID: 661197614}
-  videoPlayer: {fileID: 0}
+  videoPlayer: {fileID: 1234658970}
   movieFolder: 
 --- !u!1 &1773767763
 GameObject:
@@ -4810,7 +4753,6 @@ RectTransform:
   - {fileID: 488411773}
   - {fileID: 1508345432}
   - {fileID: 1134237270}
-  - {fileID: 1732328762}
   - {fileID: 1773767764}
   m_Father: {fileID: 1735731705}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

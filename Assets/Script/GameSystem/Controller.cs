@@ -87,7 +87,7 @@ public class Controller : MonoBehaviour
 
         Vector2 selectionSize = cursorPos[gamepadIndex] - cursorStartPos[gamepadIndex];
 
-        if(Math.Abs(selectionSize.x * selectionSize.y) > 1500f)
+        if(Math.Abs(selectionSize.x * selectionSize.y) > 120000f)
         {
             _state[gamepadIndex] = false;
             _selectionbox[gamepadIndex].GetComponent<RectTransform>().sizeDelta = Vector2.zero;

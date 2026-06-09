@@ -85,6 +85,8 @@ public class GameRecorder : MonoBehaviour
                     {
                         Debug.Log("Start!!!");
                         StartRecording();
+                        AudioListener.volume = 1f;
+                        AudioListener.pause = false;
                         gameManager.PlayerShow();
                         phase = 2;
                     }
@@ -141,10 +143,11 @@ public class GameRecorder : MonoBehaviour
                         pic = File.ReadAllBytes(pictureFile);
                         loadedTexture.LoadImage(pic);
                         pictures[3].texture = loadedTexture;
-
+                        
+                        yield return new WaitForSeconds(2f);
                         // VideoClip recordedClip = AssetDatabase.LoadAssetAtPath<VideoClip>($"{movieFolder}/{record}.mp4");
                         videoPlayer.url = $"file://C:/Users/RHA/ExcuseMe/{movieFolder}/{record}.mp4";
-                        videoPlayer.controlledAudioTrackCount = 0;
+                        // videoPlayer.controlledAudioTrackCount = 0;
                         videoPlayer.Prepare();
                         videoPlayer.Play();
 
@@ -186,6 +189,7 @@ public class GameRecorder : MonoBehaviour
         
         movieRecorderSettings.name = "My Video Recorder";
         movieRecorderSettings.Enabled = true;
+        movieRecorderSettings.CaptureAudio = false;
 
         // movieRecorderSettings.OutputFormat = MovieRecorderSettings.VideoRecorderOutputFormat.MP4;
 

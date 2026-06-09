@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 
         mask.Reload();
         uiTrigger.triggerNum = 0;
+        uiTrigger.animator.GetComponent<Animator>().SetBool("isFinished", false);
         uiTrigger.director.time = 0f;
         isSetup = true;
         gameRunning = false;
@@ -151,7 +152,7 @@ public class GameManager : MonoBehaviour
         mask.Reload();
         PlayerHidden();
         uiTrigger.triggerNum = 2;
-
+        uiTrigger.animator.GetComponent<Animator>().SetBool("isFinished", false);
         StartCoroutine(screenShots.Timeline());
 
         gameRunning = true;
@@ -166,6 +167,7 @@ public class GameManager : MonoBehaviour
         controller.enabled = false;
 
         uiTrigger.triggerNum = 3;
+        uiTrigger.animator.GetComponent<Animator>().SetBool("isFinished", false);
         #if UNITY_EDITOR
         AssetDatabase.Refresh();
         #endif
@@ -175,6 +177,7 @@ public class GameManager : MonoBehaviour
         if(_ready.All(x => x == true))
         {
             Debug.Log("All Players are Ready. Starting the Game...");
+            uiTrigger.animator.GetComponent<Animator>().SetBool("isFinished", false);
             GameStart(out gameRunning);
         }
     }
