@@ -18,6 +18,15 @@ public class Controller : MonoBehaviour
     [Tooltip("Selection boxes of each player")]
     [SerializeField] public GameObject[] _selectionbox;
     [SerializeField] public bool[] _state;
+
+    // === 新增音訊相關欄位 ===
+    [Header("Audio Settings")]
+    [Tooltip("用來播放音效的 AudioSource 組件")]
+    [SerializeField] private AudioSource audioSource;
+    [Tooltip("放開按鈕時要播放的音檔 (例如：放開選取的音效)")]
+    [SerializeField] private AudioClip selectionReleaseSound;
+    // =======================
+
     //---------------------------------------------------------
     private Vector2[] cursorPos;
     private Vector2[] cursorStartPos;
@@ -30,6 +39,12 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         gameManager = FindFirstObjectByType<GameManager>();
+
+        // 自動防呆：如果忘記在 Inspector 掛載 AudioSource，嘗試從自己身上抓取
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
     void Update()
     {
@@ -122,7 +137,14 @@ public class Controller : MonoBehaviour
 
             CalculatePointState(gamepadIndex);
             _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = false;
-            // 程式碼改這裡
+            
+            // 程式碼改這裡 --------------------------------------------
+            if (audioSource != null && selectionReleaseSound != null)
+            {
+                // 使用 PlayOneShot 確保多個玩家同時放開時，音效可以重疊播放而不會被互相切斷
+                audioSource.PlayOneShot(selectionReleaseSound);
+            }
+            // -------------------------------------------------------
         }
     }
     private void CalculatePointState(int gamepadIndex)
