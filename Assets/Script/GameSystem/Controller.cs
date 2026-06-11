@@ -115,13 +115,14 @@ public class Controller : MonoBehaviour
         if(gamePads[gamepadIndex].buttonNorth.wasReleasedThisFrame && _state[gamepadIndex] == true)
         {
             _state[gamepadIndex] = false;
-
+            
             cursorEndPos[gamepadIndex] = cursorPos[gamepadIndex];
 
             Debug.Log("Player " + (gamepadIndex + 1) + " cancelled selection.");
 
             CalculatePointState(gamepadIndex);
             _selectionbox[gamepadIndex].GetComponent<RawImage>().enabled = false;
+            // 程式碼改這裡
         }
     }
     private void CalculatePointState(int gamepadIndex)

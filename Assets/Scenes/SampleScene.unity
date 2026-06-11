@@ -316,7 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0.1764706}
+  m_Color: {r: 0.6665718, g: 1, b: 0.5943395, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3820,7 +3820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.1764706}
+  m_Color: {r: 1, g: 0.87106913, b: 0.87106913, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4193,7 +4193,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0827d44179474664f83e797a486a5c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mask
-  texture: {fileID: 2800000, guid: b6845160654a9df4591c3f2fcedf28ed, type: 3}
+  textures:
+  - {fileID: 2800000, guid: 2b46fdcb82ffcaa44b5c6451b9179558, type: 3}
+  - {fileID: 2800000, guid: 6472116761b2276408eaa6e72329621a, type: 3}
+  - {fileID: 2800000, guid: 68ec978e26d33b84291db964b8e57cf3, type: 3}
+  - {fileID: 0}
   UIParents:
   - {fileID: 162664066}
   - {fileID: 1477606229}
@@ -4886,7 +4890,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.1764706}
+  m_Color: {r: 0.38993704, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5033,7 +5037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0, a: 0.1764706}
+  m_Color: {r: 1, g: 1, b: 0.63836473, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
