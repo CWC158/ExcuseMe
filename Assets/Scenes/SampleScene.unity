@@ -251,7 +251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ca01777fbdad33145ba669f0c1e12160, type: 3}
+  m_Texture: {fileID: 2800000, guid: 5c44da30641d10c4e81318b16c180f19, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1429,7 +1429,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
+  m_Texture: {fileID: 2800000, guid: e9f68474aee5f9a46ae540109d857916, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2376,7 +2376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 3e12ae9024a872f44b773cc0a3cacbcd, type: 3}
+  m_Texture: {fileID: 2800000, guid: f203b96cec010f64f849f51234b062e7, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3065,7 +3065,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1234658969}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 464ae7114cc9ca443b013c8135d1e95d, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: a087b27e37ef3aa499f20f4f0b1d1604, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -3075,7 +3075,7 @@ VideoPlayer:
   m_TargetMaterialProperty: <noninit>
   m_RenderMode: 2
   m_AspectRatio: 2
-  m_DataSource: 1
+  m_DataSource: 0
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
@@ -3085,7 +3085,7 @@ VideoPlayer:
   - 1
   m_Url: file://C:/Users/RHA/ExcuseMe/Assets/Videos/0525_021405.mp4
   m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
+  m_DirectAudioMutes: 01
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 0
   m_SkipOnDrop: 0
@@ -3204,7 +3204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 3e12ae9024a872f44b773cc0a3cacbcd, type: 3}
+  m_Texture: {fileID: 2800000, guid: 80911c56223c9914e85d99f8caeb8940, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3302,12 +3302,12 @@ GameObject:
   - component: {fileID: 1453382879}
   - component: {fileID: 1453382878}
   m_Layer: 0
-  m_Name: camerashot
+  m_Name: Camerashot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!82 &1453382878
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4323,9 +4323,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mask
   textures:
-  - {fileID: 2800000, guid: 2b46fdcb82ffcaa44b5c6451b9179558, type: 3}
   - {fileID: 2800000, guid: 6472116761b2276408eaa6e72329621a, type: 3}
   - {fileID: 2800000, guid: 68ec978e26d33b84291db964b8e57cf3, type: 3}
+  - {fileID: 2800000, guid: 2b46fdcb82ffcaa44b5c6451b9179558, type: 3}
   UIParents:
   - {fileID: 162664066}
   - {fileID: 1477606229}
@@ -4388,7 +4388,7 @@ MonoBehaviour:
   - {fileID: 2041525530}
   _state: 
   audioSource: {fileID: 1453382878}
-  selectionReleaseSound: {fileID: 0}
+  selectionReleaseSound: {fileID: 8300000, guid: 2c1262f96859e8245be5760c2258cb52, type: 3}
   pressingTime: []
 --- !u!114 &1755853355
 MonoBehaviour:

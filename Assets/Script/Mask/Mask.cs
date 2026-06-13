@@ -8,7 +8,6 @@ public class Mask : MonoBehaviour
     private List<RawImage>[] stickers;
     private GameManager gameManager;
     
-    // 1. 改為陣列，讓你可以從 Inspector 拖入 3 張不同的貼紙圖片
    [SerializeField] private Texture2D[] textures;
     
     private List<bool>[] pasteState;
@@ -21,7 +20,6 @@ public class Mask : MonoBehaviour
 
     void Update()
     {
-        // 優化：拿掉 try-catch，改用 if 檢查。如果還沒初始化，就直接跳過不執行
         if (gameManager == null || pasteState == null || stickers == null) 
             return;
 
@@ -32,14 +30,12 @@ public class Mask : MonoBehaviour
     {
         for(int i = 0; i < gameManager._players.Length; i++)
         {
-            // 安全檢查：確保陣列索引不會超出範圍
             if (i >= pasteState.Length || i >= gameManager.pointState.Length) continue;
 
             for(int j = 0; j < gameManager.pointState[i].Count; j++)
             {
                 if (j >= pasteState[i].Count) continue;
 
-                // 當需要貼貼紙，且該位置還沒貼過時
                 if(gameManager.pointState[i][j] == true && pasteState[i][j] == false)
                 {
                     GameObject instance = new GameObject("Sticker");
@@ -47,7 +43,6 @@ public class Mask : MonoBehaviour
                     
                     RawImage img = instance.AddComponent<RawImage>();
 
-                    // 2. 核心隨機邏輯：隨機挑選三種貼紙的其中一種
                     if (textures != null && textures.Length > 0)
                     {
                         int randomIndex = UnityEngine.Random.Range(0, textures.Length);
@@ -61,7 +56,6 @@ public class Mask : MonoBehaviour
                     pasteState[i][j] = true;
                 }
 
-                // 更新貼紙位置
                 if(stickers[i][j] != null && pasteState[i][j] == true)
                 {
                     Vector2 pos = new Vector2(gameManager._players[i].points[j].x, gameManager._players[i].points[j].y);
@@ -80,7 +74,7 @@ public class Mask : MonoBehaviour
 
         for(int k = 0; k < UIParents.Length; k++)
         {
-            if (UIParents[k] == null) continue; // 避免清空 Mask 自己底下的重要 UI
+            if (UIParents[k] == null) continue;
             
             foreach(Transform child in UIParents[k])
             {
